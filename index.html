@@ -1,120 +1,24 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Color Removal Tool</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f0f0f0;
-  }
-  .container {
-    text-align: center;
-  }
-  .image-preview {
-    max-width: 100%;
-    max-height: 400px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-  }
-  input[type="file"] {
-    padding: 10px;
-    margin-bottom: 10px;
-  }
-  input[type="color"] {
-    padding: 10px;
-  }
-  button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 10px;
-  }
-  button:hover {
-    background-color: #0056b3;
-  }
-</style>
+ <meta charset="UTF-8">
+ <meta http-equiv="X-UA-Compatible" content="IE=edge">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <link rel="stylesheet" href="style.css">
+ <script src="script.js" defer></script>
+ <title>Ping Pong Game</title>
 </head>
 <body>
-  <div class="container">
-    <h2>Color Removal Tool</h2>
-    <input type="file" id="imageInput" accept="image/*">
-    <br>
-    <label for="colorPicker">Select Color to Remove:</label>
-    <input type="color" id="colorPicker" value="#ff0000">
-    <br>
-    <button onclick="removeColor()">Remove Color</button>
-    <br>
-    <canvas id="outputCanvas" class="image-preview"></canvas>
+ <div class="header">
+  <img src="./Image/pngkit_ping-pong-ball-png_1477974.png" alt="logo" width="60px">
+  <div class="buttons">
+   <button class="start-btn">Start</button>
+   <button class="pause-btn">Pause</button>
+   <button class="restart-btn">Restart</button>
   </div>
+ </div>
 
-  <script>
-    function removeColor() {
-      const input = document.getElementById('imageInput');
-      const canvas = document.getElementById('outputCanvas');
-      const ctx = canvas.getContext('2d');
-      const colorPicker = document.getElementById('colorPicker');
-
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        const img = new Image();
-        img.onload = function() {
-          canvas.width = img.width;
-          canvas.height = img.height;
-          ctx.drawImage(img, 0, 0);
-
-          // Get image data
-          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-          const data = imageData.data;
-
-          // Get selected color to remove
-          const selectedColor = hexToRgb(colorPicker.value);
-
-          // Iterate through each pixel
-          for (let i = 0; i < data.length; i += 4) {
-            // Check if pixel matches selected color (within tolerance)
-            if (colorMatch(data, i, selectedColor)) {
-              // Set alpha channel to 0 (transparent)
-              data[i + 3] = 0;
-            }
-          }
-
-          // Put modified image data back to the canvas
-          ctx.putImageData(imageData, 0, 0);
-        };
-        img.src = event.target.result;
-      };
-
-      if (input.files && input.files[0]) {
-        reader.readAsDataURL(input.files[0]);
-      }
-    }
-
-    function colorMatch(data, index, color) {
-      // Define tolerance for color matching
-      const tolerance = 30;
-      // Check if pixel color is within tolerance of selected color
-      return Math.abs(data[index] - color.r) < tolerance &&
-             Math.abs(data[index + 1] - color.g) < tolerance &&
-             Math.abs(data[index + 2] - color.b) < tolerance;
-    }
-
-    function hexToRgb(hex) {
-      // Convert hex color (e.g., #rrggbb) to RGB object
-      const bigint = parseInt(hex.substring(1), 16);
-      const r = (bigint >> 16) & 255;
-      const g = (bigint >> 8) & 255;
-      const b = bigint & 255;
-      return { r, g, b };
-    }
-  </script>
+ <div class="pong-wrapper">
+  <canvas id="ping-pong" width="600px" height="400px"></canvas>
+ </div>
 </body>
 </html>
